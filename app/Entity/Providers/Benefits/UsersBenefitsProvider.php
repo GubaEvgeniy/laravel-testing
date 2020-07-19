@@ -12,6 +12,7 @@ class UsersBenefitsProvider
     public static function getUserBenefitsByUserIdAndId(User $user, int $userBenefitsId): UsersBenefits
     {
         return UsersBenefits::query()
+            ->unused()
             ->whereUserId($user->id)
             ->whereId($userBenefitsId)
             ->firstOrFail();

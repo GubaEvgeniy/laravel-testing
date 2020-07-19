@@ -47,6 +47,9 @@ class BenefitsServices
         /** @var BenefitsTypeInterface $benefitClass */
         $benefitClass = new $benefitClassName();
         $benefitClass->add($userBenefit);
+
+        $userBenefit->used = true;
+        $userBenefit->save();
     }
 
     private function getRandomBenefit(Collection $benefits): Benefits

@@ -35,8 +35,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|UsersBenefits whereUpdatedAt($value)
  * @method static Builder|UsersBenefits whereUsed($value)
  * @method static Builder|UsersBenefits whereUserId($value)
+ * @method static Builder|UsersBenefits unused()
  * @mixin \Eloquent
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $deleted_at
  * @method static \Illuminate\Database\Query\Builder|UsersBenefits onlyTrashed()
  * @method static Builder|UsersBenefits whereDeletedAt($value)
  * @method static Builder|UsersBenefits whereResult($value)
@@ -69,5 +70,10 @@ class UsersBenefits extends Model
     public function benefit(): BelongsTo
     {
         return $this->belongsTo(Benefits::class, 'benefits_id');
+    }
+
+    public function scopeUnused($query)
+    {
+        return $query->where('used', '=', false);
     }
 }

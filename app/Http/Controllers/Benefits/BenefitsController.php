@@ -33,7 +33,13 @@ class BenefitsController extends Controller
         $user = Auth::user();
         $userBenefitsId = $request->getUserBenefitsId();
 
-        $benefitsServices->accept($user, $userBenefitsId);
+        try {
+            $benefitsServices->accept($user, $userBenefitsId);
+
+            return redirect()->route('home')->with('success', 'You accepted the gift');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('home')->with('error', 'This user cannot use gift');
+        }
     }
 
     public function refuse(UserBenefitsRequest $request, BenefitsServices $benefitsServices)
