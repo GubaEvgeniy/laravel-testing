@@ -20,6 +20,6 @@ abstract class MoneyBenefitsAbstract implements BenefitsTypeInterface
 
     public function add(UsersBenefits $usersBenefits)
     {
-        
+
     }
 }
