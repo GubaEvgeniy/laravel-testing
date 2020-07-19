@@ -36,6 +36,12 @@ use Illuminate\Support\Carbon;
  * @method static Builder|UsersBenefits whereUsed($value)
  * @method static Builder|UsersBenefits whereUserId($value)
  * @mixin \Eloquent
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|UsersBenefits onlyTrashed()
+ * @method static Builder|UsersBenefits whereDeletedAt($value)
+ * @method static Builder|UsersBenefits whereResult($value)
+ * @method static \Illuminate\Database\Query\Builder|UsersBenefits withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|UsersBenefits withoutTrashed()
  */
 class UsersBenefits extends Model
 {
