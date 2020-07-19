@@ -16,3 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
+
+Route::group([
+    'prefix' => 'benefits',
+    'as' => 'benefits.',
+    'namespace' => 'Benefits',
+    'middleware' => ['auth'],
+], function () {
+    Route::post('/', 'BenefitsController@calculate')->name('calculate');
+    Route::post('/refuse', 'BenefitsController@refuse')->name('refuse');
+    Route::post('/accept', 'BenefitsController@accept')->name('accept');
+});

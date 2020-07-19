@@ -1,5 +1,22 @@
 FROM php:7.4-fpm
-
-RUN apt-get update && docker-php-ext-install pdo_mysql
-
 WORKDIR /var/www
+
+ARG USER_ID
+ARG GROUP_ID
+
+RUN apt-get update && apt-get install -y \
+        curl \
+        wget
+
+RUN docker-php-ext-install pdo_mysql
+
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+ADD ./docker/php.ini /usr/local/etc/php/php.ini
+
+RUN wget https://getcomposer.org/installer -O - -q \
+    | php -- --install-dir=/bin --filename=composer --quiet
+
+RUN usermod -u ${USER_ID} www-data && groupmod -g ${GROUP_ID} www-data
+USER "${USER_ID}:${GROUP_ID}"
+
+

@@ -18,10 +18,13 @@
                         <p>Hello {{ Auth::user()->name }}</p>
                     @endauth
 
+                    <form method="POST" action="{{ route('benefits.calculate') }}">
+                        @csrf
 
-                    <button type="submit" class="btn btn-primary">
-                        {{ __('Get benefit') }}
-                    </button>
+                        <button type="submit" class="btn btn-primary">
+                            {{ __('Get benefit') }}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

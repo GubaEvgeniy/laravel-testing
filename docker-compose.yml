@@ -14,13 +14,18 @@ services:
         build:
             context: ./
             dockerfile: docker/php-fpm.docker
+            args:
+              - USER_ID
+              - GROUP_ID
         volumes:
             - ./:/var/www
         links:
             - mysql
         environment:
-            - "DB_PORT=3306"
-            - "DB_HOST=mysql"
+            PHP_IDE_CONFIG: "serverName=laravel-testing"
+            PHP_XDEBUG_ENABLED: 1
+            DB_HOST: "mysql"
+            DB_PORT: "3306"
     mysql:
         image: mysql:5.7
         volumes:

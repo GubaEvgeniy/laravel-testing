@@ -8,3 +8,12 @@
     background-color: #0c64a2;
     padding: 0.35rem 1rem;
 }
+
+.card-benefits{
+    .card-footer {
+        form {
+            float: left;
+            margin-right: 1em;
+        }
+    }
+}
