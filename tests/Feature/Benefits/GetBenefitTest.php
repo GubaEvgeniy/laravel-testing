@@ -5,7 +5,10 @@ namespace Tests\Feature\Benefits;
 
 
 use App\Entity\Models\Benefits\UsersBenefits;
+use App\Entity\Models\Billing\Wallets;
 use App\Entity\Models\Users\User;
+use App\Events\Billing\AddBonusMoneyEvent;
+use App\Events\Billing\AddRealMoneyEvent;
 use App\Services\Benefits\BenefitsServices;
 use App\Services\Benefits\BenefitsType\BenefitsTypeInterface;
 use Illuminate\Database\Eloquent\Collection;

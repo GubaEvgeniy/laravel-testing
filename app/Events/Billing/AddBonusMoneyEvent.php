@@ -4,41 +4,23 @@
 namespace App\Events\Billing;
 
 
+use App\Entity\Models\Billing\TransactionsTypes;
 use App\Entity\Models\Billing\Wallets;
-use App\Events\Event;
 use App\Exceptions\Billing\WrongTypeWalletsException;
 
-class AddBonusMoneyEvent extends Event
+class AddBonusMoneyEvent extends AbstractBillingTransactionEvent
 {
-    /**
-     * @var Wallets
-     */
-    private Wallets $wallets;
-    private $amount;
-
-    public function __construct(Wallets $wallets, $amount)
+    public function __construct(Wallets $wallets, $amount, string $comment = '')
     {
         if ($wallets->type !== Wallets::TYPE_BONUS_MONEY) {
             throw new WrongTypeWalletsException(Wallets::TYPE_REAL_MONEY, $wallets->type);
         }
 
-        $this->wallets = $wallets;
-        $this->amount = $amount;
+        parent::__construct($wallets, $amount, $comment);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAmount()
+    public function getTransactionType(): string
     {
-        return $this->amount;
-    }
-
-    /**
-     * @return Wallets
-     */
-    public function getWallets(): Wallets
-    {
-        return $this->wallets;
+        return TransactionsTypes::TYPE_ADD;
     }
 }
