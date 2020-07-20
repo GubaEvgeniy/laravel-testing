@@ -27,5 +27,8 @@ abstract class ItemsBenefitsAbstract implements BenefitsTypeInterface
                 'from raffle prizes'
             )
         );
+
+        $usersBenefits->used = true;
+        $usersBenefits->save();
     }
 }

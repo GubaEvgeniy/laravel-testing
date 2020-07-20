@@ -9,7 +9,7 @@ use App\Entity\Models\Billing\Wallets;
 use App\Entity\Providers\Billing\WalletsProvider;
 use App\Events\Billing\AddBonusMoneyEvent;
 
-class BonusMoneyAbstract extends MoneyBenefitsAbstract
+class BonusMoney extends MoneyBenefitsAbstract
 {
     const TYPE = 'bonus_money';
 
@@ -18,5 +18,8 @@ class BonusMoneyAbstract extends MoneyBenefitsAbstract
         $wallet = WalletsProvider::getWalletByTypeForUser($usersBenefits->user, Wallets::TYPE_BONUS_MONEY);
 
         event(new AddBonusMoneyEvent($wallet, $usersBenefits->result));
+
+        $usersBenefits->used = true;
+        $usersBenefits->save();
     }
 }

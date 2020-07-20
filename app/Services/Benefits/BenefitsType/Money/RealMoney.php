@@ -9,7 +9,7 @@ use App\Entity\Models\Billing\Wallets;
 use App\Entity\Providers\Billing\WalletsProvider;
 use App\Events\Billing\AddRealMoneyEvent;
 
-class RealMoneyAbstract extends MoneyBenefitsAbstract
+class RealMoney extends MoneyBenefitsAbstract
 {
     const TYPE = 'real_money';
 
@@ -18,5 +18,8 @@ class RealMoneyAbstract extends MoneyBenefitsAbstract
         $wallet = WalletsProvider::getWalletByTypeForUser($usersBenefits->user, Wallets::TYPE_REAL_MONEY);
 
         event(new AddRealMoneyEvent($wallet, $usersBenefits->result));
+
+        $usersBenefits->used = true;
+        $usersBenefits->save();
     }
 }

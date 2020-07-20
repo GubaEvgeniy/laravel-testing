@@ -1,16 +1,16 @@
 <?php
 
 use App\Entity\Models\Benefits\Benefits;
-use App\Services\Benefits\BenefitsType\Money\BonusMoneyAbstract;
+use App\Services\Benefits\BenefitsType\Money\BonusMoney;
 use App\Services\Benefits\BenefitsType\Items\RealItem;
-use App\Services\Benefits\BenefitsType\Money\RealMoneyAbstract;
+use App\Services\Benefits\BenefitsType\Money\RealMoney;
 use Illuminate\Database\Migrations\Migration;
 
 class AddBenefitsToTable extends Migration
 {
     const BENEFITS = [
         [
-            'type' => RealMoneyAbstract::TYPE,
+            'type' => RealMoney::TYPE,
             'data' => [
                 'min_range' => 0,
                 'max_range' => 100
@@ -18,7 +18,7 @@ class AddBenefitsToTable extends Migration
             'active' => true
         ],
         [
-            'type' => BonusMoneyAbstract::TYPE,
+            'type' => BonusMoney::TYPE,
             'data' => [
                 'min_range' => 0,
                 'max_range' => 100
