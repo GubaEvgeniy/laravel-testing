@@ -33,4 +33,14 @@ class WalletsProvider
             throw new LogicException('Billing wallets is already exists');
         }
     }
+
+    /**
+     * @param User $user
+     * @param string $type
+     * @return Wallets
+     */
+    public static function getWalletByTypeForUser(User $user, string $type): Wallets
+    {
+        return Wallets::query()->whereType($type)->whereUserId($user->id)->first();
+    }
 }

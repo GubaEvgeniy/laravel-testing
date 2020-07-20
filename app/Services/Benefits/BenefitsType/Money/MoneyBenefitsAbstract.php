@@ -17,9 +17,4 @@ abstract class MoneyBenefitsAbstract implements BenefitsTypeInterface
 
         return \rand($min, $max);
     }
-
-    public function add(UsersBenefits $usersBenefits)
-    {
-
-    }
 }
