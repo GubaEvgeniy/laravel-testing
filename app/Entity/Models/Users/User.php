@@ -36,6 +36,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Entity\Models\Billing\Wallets[] $wallets
+ * @property-read int|null $wallets_count
  */
 class User extends Authenticatable
 {

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Entity\Models\Billing\Wallets
-
+ *
  * @mixin \Eloquent
  * @property int $id
  * @property int $user_id
