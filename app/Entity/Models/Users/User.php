@@ -2,7 +2,9 @@
 
 namespace App\Entity\Models\Users;
 
+use App\Entity\Models\Billing\Wallets;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -65,4 +67,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function wallets(): HasMany
+    {
+        return $this->hasMany(Wallets::class);
+    }
 }

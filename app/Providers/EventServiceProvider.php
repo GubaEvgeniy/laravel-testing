@@ -3,7 +3,12 @@
 namespace App\Providers;
 
 use App\Events\AddRealItemsEvent;
+use App\Events\Billing\AddBonusMoneyEvent;
+use App\Events\Billing\AddRealMoneyEvent;
 use App\Listeners\AddRealItemsListener;
+use App\Listeners\Billing\AddBonusMoneyListener;
+use App\Listeners\Billing\AddRealMoneyListener;
+use App\Listeners\CreateBillingWallets;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,9 +23,16 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            CreateBillingWallets::class
         ],
         AddRealItemsEvent::class => [
             AddRealItemsListener::class
+        ],
+        AddRealMoneyEvent::class => [
+            AddRealMoneyListener::class
+        ],
+        AddBonusMoneyEvent::class => [
+            AddBonusMoneyListener::class
         ]
     ];
 
