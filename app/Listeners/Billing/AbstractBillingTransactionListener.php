@@ -14,6 +14,7 @@ abstract class AbstractBillingTransactionListener
         $transaction = new Transactions();
         $transaction->wallet_id = $event->getWallets()->id;
         $transaction->billing_transactions_type = $event->getTransactionType();
+        $transaction->amount = $event->getAmount();
         $transaction->balance_before = $event->getWallets()->amount;
         $transaction->comment = $event->getComment();
         $transaction->save();

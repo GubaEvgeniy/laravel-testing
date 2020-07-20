@@ -29,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Transactions whereUpdatedAt($value)
  * @method static Builder|Transactions whereWalletId($value)
  * @mixin \Eloquent
+ * @property float $amount
+ * @method static Builder|Transactions whereAmount($value)
  */
 class Transactions extends Model
 {

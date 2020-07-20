@@ -4,12 +4,12 @@
 namespace App\Listeners\Billing;
 
 
-use App\Events\Billing\AddRealMoneyEvent;
 use Illuminate\Support\Facades\DB;
 
-class AddRealMoneyListener extends AbstractBillingTransactionListener
+
+class AddMoneyListener extends AbstractBillingTransactionListener
 {
-    public function handle(AddRealMoneyEvent $event)
+    public function handle($event)
     {
         DB::transaction(function () use ($event) {
             $this->handleBillingTransaction($event);

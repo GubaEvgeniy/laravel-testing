@@ -18,6 +18,22 @@ Route::get('/', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::group([
+    'prefix' => 'cabinet',
+    'as' => 'cabinet.',
+    'namespace' => 'Cabinet',
+    'middleware' => ['auth'],
+], function () {
+    Route::group([
+        'prefix' => 'billing',
+        'as' => 'billing.',
+        'namespace' => 'Billing'
+    ], function () {
+        Route::get('/wallets', 'WalletsController@show')->name('wallets.show');
+        Route::post('/wallets', 'WalletsController@action')->name('wallets.action');
+    });
+});
+
+Route::group([
     'prefix' => 'benefits',
     'as' => 'benefits.',
     'namespace' => 'Benefits',

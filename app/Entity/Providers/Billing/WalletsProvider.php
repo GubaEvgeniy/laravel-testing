@@ -6,6 +6,7 @@ namespace App\Entity\Providers\Billing;
 
 use App\Entity\Models\Billing\Wallets;
 use App\Entity\Models\Users\User;
+use Illuminate\Database\Eloquent\Collection;
 use LogicException;
 
 class WalletsProvider
@@ -42,5 +43,14 @@ class WalletsProvider
     public static function getWalletByTypeForUser(User $user, string $type): Wallets
     {
         return Wallets::query()->whereType($type)->whereUserId($user->id)->first();
+    }
+
+    /**
+     * @param User $user
+     * @return Collection
+     */
+    public static function getAllWalletsByUser(User $user): Collection
+    {
+        return Wallets::query()->whereUserId($user->id)->get();
     }
 }
