@@ -1,79 +1,59 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+## О проекте
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Данный проект был создан как пример моей разработки приложения. Code review приветствуется и пойдет на пользу!
 
-## About Laravel
+Так же для реализации данного приложения, были использованы такие возможности фреймворка laravel(не только фреймворка) как events, console commands, scopes, providers, validation requests, blade views, phpunit
+Ниже я постараюсь дать подробное описание компонентов приложения, с его минусами и плюсами.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Docker
+Мне нравится использовать докер, т.к. он предоставляет возможности изолированости кода и запуска проекта без настройки сервера.
+Из интересного: 
+* При запуске контейнера из образа пользователь www-data получает uid и gid, которые будут переданы извне. Когда мы зайдем в контейнер, и создадим, например, файл миграции, то на машине хоста владельцем этого файла будем не мы. И каждый раз надо будет менять права созданного файла
+* Установка xDebug. Возможно в современном вебе использованием xDebug кого и не удивить, т.к. по факту это должно быть стандартом разработки. Однако мне необходимо было отобразить его использование мною
+* Использование Makefile и команды `make` для более быстрого доступа к контейнерам и быстрый доступ к наиболее используемым командам
+  
+## Laravel
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* Для упрощения разработки использовал пакет [barryvdh/laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper). Он позволяет генерировать вспомогательные файлы(например для фасадов или моделей), которые позволяют IDE использовать более точное автозаполнение 
+* Для Front-части установка отдельного контейнера с nodeJS и использование пакета `laravel-mix` для упрощения работы с конвертацией `scss` в обычный `css` и прочее
+* Использование `laravel-ui` для быстрой генерации дефолтной системы аутентификации
+ 
+## Описание приложения
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Данное проект представляет собой веб-приложение для розыгрыша призов(benefits). После аутентификации пользователь может нажать на кнопку и получить случайный приз. 
+Призы бывают 3х типов: 
+ * денежный приз (случайная сумма в интервале). Денежный приз может быть перечислен на счет пользователя в банке (HTTP запрос к API банка). Может конвертироваться в баллы лояльности с учетом коэффициента
+ * бонусные баллы (случайная сумма в интервале). Баллы могут быть зачислены на счет лояльности в приложении
+ * физический предмет (случайный предмет из списка). Может быть отправлен по почте (вручную работником). Денежный приз может .
+От приза можно отказаться. Деньги и предметы ограничены, баллы лояльности нет.
 
-## Learning Laravel
+## Реализация
+### Benefits
+Каждый приз реализован как отдельный класс со своими свойствами подсчёта выигрыша. Для денег это рандомное число из диапозона, для реального предмета это случайное имя из списка имен.
+Данные о размере диапозона и список имен реальных предметов, хранится в базе в таблице `benefits`. Таким образом в будущем, мы можем легко внести изменения в приз, а так же повесить на него необходимые настройки - например ограничение на количество выигравших.
+За взаимодействие с призами отвечае класс `BenefitsServices`, который впрочем не знает какие в данный момент призы вообще существуют - он работает с одним интерфейсом `BenefitsTypeInterfaceё`, который сам реализует необходимые призы. Таким образом если нам понадобится сделать добавление нового приза, не нужно будет делать изменения в коде - достаточно создать новый приз и имплементировать его данным интерфейсом
+При выпадении приза, происходит запись в таблицу `users_benefits`. С помощью этой записи мы можем:
+* понять какой приз, с каким результатом, какому юзеры выпал
+* посмотреть данные о условиях приза(если в будущем эти условия поменялись)
+* можно построить историю выпадения призов для юзера
+* можно отследить использовал ли юзер выпавший ему приз или полностью отказался от него
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Withdrawal Real Items
+Если юзер принимает приз реальный предмет, тогда создаётся запись в таблице `withdrawal_items`, в которой можно увидеть процесс этой отправки.
+Условный менеджер теперь может контролировать процесс отправки.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Billing
+Для взаимодействия с денежным призом, мною была реализована условно абстрактная биллинг система. Суть её заключается в том, что у пользователя есть два кошелька - `bonus_money` и `real_money`.
+Для сохранения консистентность данных, используется таблица `billing_transactions` в которой отображены все транзакции по любому из кошельков:
+ * добавление денег будь-то из приза или каких-либо других источников, которые могут возникнуть в будущем,
+ * или списание средств, при конвертации бонусных денег в реальные, или вывод реальных денег на карту пользователя
+ 
+На момент написания readme, в данной системе нехватает реализации блокировок на саму транзакцию - имеется ввиду, что б не могла возникнуть ситация, когда взаимодействие с кошельком происходит в один и тот же момент времени в разных ситуациях. Абстрактный пример: мы делаем конвертацию с бонусного счета в реальный и при этом покупаем за бонусные деньги реальный предмет. Такие запросы должны происходит последовательно, с учётом состоянии гонки 
 
-## Laravel Sponsors
+### PaymentSystem
+Реализовано путём создания простого класса с одним методом `paymentTransfer`, который делает запрос с API банка с необходимыми нам параметрами.
+По факту данное действие должно быть реализованно путём использования очереди, например через Redis. Т.е. что б юзер при выводе средств, не ждал пока этот запрос (к api банка) отпработает и вернет какой-то результат. Для разруливание данной ситуации в `billing_transactions` должно быть добавленна колонка `status` которая и отображала б процесс данной транзакции. Для вывода на счет пользователя данная транзакция была бы в статусе `open` при запросе к банку и меняла свой статус в зависимости от webhook`a на которой банк дал бы свой ответ по данной транзакции 
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
-- [云软科技](http://www.yunruan.ltd/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## В заключении
+Реализации данного проекта писалась на ограниченное количество времени, было потрачено ~2 рабочих дня. Тут полноценности приложения тут недостаёт некоторых решений, однако свою цель - абстрактно показать пример моего кода он полностью выполняет.
+Буду крайне благодарен за критику и отзывы! 
